@@ -210,7 +210,7 @@ RUN   curl -sS https://getcomposer.org/installer | php \
       && mv composer.phar /usr/local/bin/composer \
       && chmod +x /usr/local/bin/composer 
 RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
-      && cd /opt/walle-web/
+      && cd /opt/walle-web/ \
       && git checkout v0.9.5 \
       && composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
       && chmod +x /entrypoint.sh \
