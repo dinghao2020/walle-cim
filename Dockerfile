@@ -13,8 +13,8 @@ ENV PHPIZE_DEPS \
 		make \
 		pkgconf \
 		re2c  
-RUN set -xe \
-	&&apk add --no-cache --virtual .persistent-deps \
+RUN set -xe && \
+	apk add --no-cache --virtual .persistent-deps \
 		ca-certificates \
 		openssl \
 		curl \
