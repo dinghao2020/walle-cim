@@ -12,9 +12,10 @@ ENV PHPIZE_DEPS \
 		libc-dev \
 		make \
 		pkgconf \
-		re2c  
-RUN set -xe && \
-	apk add --no-cache --virtual .persistent-deps \
+		re2c
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN set -xe \
+	&& apk add --no-cache --virtual .persistent-deps \
 		ca-certificates \
 		openssl \
 		curl \
@@ -22,18 +23,16 @@ RUN set -xe && \
 		xz \
         	git \
         	nginx \
-        	mariadb \
-        	mariadb-client \
         	unzip \
         	subversion \
         	ansible \
-        	openssh-client 
+        	openssh-client
 
 ENV PHP_INI_DIR /etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d && \
         mkdir -p /etc/ansible && \
         touch /etc/ansible/hosts && \
-        wget --no-check-certificate -q -O /etc/ansible/ansible.cfg https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg 
+        curl -O /etc/ansible/ansible.cfg https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx
 
@@ -61,7 +60,7 @@ RUN set -xe \
 		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
 	done \
 	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
-	&& rm -r "$GNUPGHOME" 
+	&& rm -r "$GNUPGHOME"
 
 RUN set -xe \
     	&& apk add --no-cache --virtual .build-deps \
@@ -153,8 +152,8 @@ RUN set -xe \
     			| xargs -r apk info --installed \
     			| sort -u \
     	)" \
-    	&& apk add --no-cache --virtual .php-rundeps $runDeps 
-    	
+    	&& apk add --no-cache --virtual .php-rundeps $runDeps
+
 RUN set -ex \
     && cd /etc \
     && if [ -d php-fpm.d ]; then \
@@ -206,26 +205,19 @@ ADD ./nginx.conf /etc/nginx/nginx.conf
 
 WORKDIR /opt/walle-web
 
-RUN   curl -sS https://getcomposer.org/installer | php \
-      && mv composer.phar /usr/local/bin/composer \
-      && chmod +x /usr/local/bin/composer 
-RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
-      && cd /opt/walle-web/ \
-      && git checkout v0.9.5 \
-      && composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
-      && chmod +x /entrypoint.sh \
+
+RUN   chmod +x /entrypoint.sh \
       && chown -R nginx:nginx /opt/walle-web \
       && mkdir -p /opt/mysql/walle \
-      && chown -R mysql:mysql /opt/mysql/walle \
       && apk del .build-deps \
       && apk del .fetch-deps \
       && rm -rf /usr/src/php*
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"
 
-EXPOSE 80 3306 9000
+EXPOSE 80  9000
 
-VOLUME ["/opt/walle-web", "/opt/mysql"]
+VOLUME ["/opt/walle-web"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 
