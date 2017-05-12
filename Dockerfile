@@ -23,6 +23,8 @@ RUN set -xe \
 		xz \
         	git \
         	nginx \
+		mariadb \
+        	mariadb-client \
         	unzip \
         	subversion \
         	ansible \
