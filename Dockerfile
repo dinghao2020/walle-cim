@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-MAINTAINER YoungMan "bushengquan@eastspider.com"
+MAINTAINER YoungMan "18001326539@163.com"
 
 LABEL description="walle-web集成Nginx,MariaDB,PHP版"
 
