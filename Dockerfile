@@ -217,9 +217,9 @@ RUN   chmod +x /entrypoint.sh \
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"
 
-EXPOSE 80  9000
+EXPOSE 80  3306  9000
 
-VOLUME ["/opt/walle-web"]
+VOLUME ["/opt/walle-web", "/opt/mysql"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 
