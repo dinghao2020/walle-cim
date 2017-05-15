@@ -22,6 +22,10 @@ docker  build -t nginx-php-walle .
 
 
 * 使用生成的镜像
+```
+docker pull ayaevil/walle-cim
+docker run -d --name walle-cim -p 80:80 -p 3306:3306 -p 9001:9000 -v /opt/walle-web:/opt/walle-web -v /opt/mysql:/opt/mysql ayaevil/walle-cim
+```
 
 ```
 构建镜像内的命令有初始化，首先要有完整的walle-web 项目代码及依赖
